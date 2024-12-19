@@ -39,6 +39,9 @@ def get_all_mods(game_id, category_id, index=1, all_mods=None):
 
 def generate():
 
+    if CURSEFORGE_API_KEY is None or CURSEFORGE_API_KEY == "":
+        print("CURSEFORGE_API_KEY not set")
+
     blacklist = []
     with open("blacklist.txt", "r") as f:
         for item in f.read().splitlines():
