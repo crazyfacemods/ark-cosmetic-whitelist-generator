@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "ark-cosmetic-whitelist-generator"
+version = "0.1.0"
+description = ""
+authors = ["Marc Seiler <mseiler@crazyfacestudios.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.32.3"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
+isort = "^5.13.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+generate = "ark_cosmetic_whitelist_generator.main:generate"
