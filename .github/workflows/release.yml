@@ -1,6 +1,11 @@
 name: Release Whitelist
 
-on: [push]
+on:
+  schedule:
+    - cron: "0 * * * *"
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -9,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: hash
-        run: echo "SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         id: hash
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -31,8 +36,8 @@ jobs:
         with:
           draft: false
           prerelease: false
-          release_name: Release $SHORT_HASH
-          tag_name: $SHORT_HASH
+          release_name: Release ${{ steps.hash.outputs.hash }}
+          tag_name: ${{ steps.hash.outputs.hash }}
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -45,3 +50,11 @@ jobs:
           asset_path: whitelist.txt
           asset_name: whitelist.txt
           asset_content_type: plain/text
+      - name: delete old releases
+        uses: Nats-ji/delete-old-releases@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          keep-count: 5
+          remove-tags: true
+          keep-old-minor-releases: true
+          keep-old-minor-releases-count: 1
