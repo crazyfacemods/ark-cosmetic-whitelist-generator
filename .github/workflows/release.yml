@@ -13,9 +13,9 @@ jobs:
     permissions: write-all
     steps:
       - uses: actions/checkout@v4
-      - name: hash
-        run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-        id: hash
+      - name: timestamp
+        run: echo "timestamp=$(date +%s)" >> $GITHUB_OUTPUT
+        id: timestamp
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -36,8 +36,8 @@ jobs:
         with:
           draft: false
           prerelease: false
-          release_name: Release ${{ steps.hash.outputs.hash }}
-          tag_name: ${{ steps.hash.outputs.hash }}
+          release_name: Release ${{ steps.timestamp.outputs.timestamp }}
+          tag_name: ${{ steps.timestamp.outputs.timestamp }}
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
