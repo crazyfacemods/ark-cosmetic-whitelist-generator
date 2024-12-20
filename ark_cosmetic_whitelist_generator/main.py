@@ -1,5 +1,7 @@
+""" This script generates a whitelist.txt file for the ARK mod "Cosmetic" by
+    querying the CurseForge API. """
+
 import os
-import json
 import requests
 
 
@@ -7,17 +9,21 @@ CURSEFORGE_API_KEY = os.getenv("CURSEFORGE_API_KEY")
 CURSEFORGE_API_URL = "https://api.curseforge.com/v1"
 
 
-def call_curseforge_api(endpoint: str = "", params: dict = {}):
+def call_curseforge_api(endpoint: str = "", params: dict = None):
+    """Call the CurseForge API with the given endpoint and parameters."""
     headers = {"x-api-key": CURSEFORGE_API_KEY, "Accept": "application/json"}
-    r = requests.get(CURSEFORGE_API_URL + endpoint, headers=headers, params=params)
+    r = requests.get(
+        CURSEFORGE_API_URL + endpoint, headers=headers, params=params, timeout=10
+    )
     if r.status_code != 200:
         print(f"Error: {r.status_code}")
         print(r.text)
-        return
+        return None
     return r.json()
 
 
 def get_all_mods(game_id, category_id, index=1, all_mods=None):
+    """Get all mods for the given game and category."""
     if all_mods is None:
         all_mods = []
 
@@ -38,12 +44,13 @@ def get_all_mods(game_id, category_id, index=1, all_mods=None):
 
 
 def generate():
+    """Generate the whitelist.txt file."""
 
     if CURSEFORGE_API_KEY is None or CURSEFORGE_API_KEY == "":
         print("CURSEFORGE_API_KEY not set")
 
     blacklist = []
-    with open("blacklist.txt", "r") as f:
+    with open("blacklist.txt", "r", encoding="UTF-8") as f:
         for item in f.read().splitlines():
             blacklist.append(item.split("|")[0])
 
@@ -57,5 +64,5 @@ def generate():
                 f"{mod['id']}|1|1|{mod["latestFiles"][0]["fileFingerprint"]}"
             )
 
-    with open("whitelist.txt", "w") as f:
+    with open("whitelist.txt", "w", encoding="UTF-8") as f:
         f.write("\n".join(mod_list))
