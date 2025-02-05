@@ -3,6 +3,7 @@
 
 import os
 import requests
+from typing import List
 
 
 CURSEFORGE_API_KEY = os.getenv("CURSEFORGE_API_KEY")
@@ -22,7 +23,7 @@ def call_curseforge_api(endpoint: str = "", params: dict = None):
     return r.json()
 
 
-def get_all_mods(game_id, category_id, index=1, all_mods=None):
+def get_all_mods(game_id: int, category_id: int, index: int = 1, all_mods: List = None):
     """Get all mods for the given game and category."""
     if all_mods is None:
         all_mods = []
@@ -60,10 +61,11 @@ def generate():
 
     for mod in all_mods:
         if str(mod["id"]) not in blacklist:
-            fingerprints = "*".join([f["fileFingerprint"] for f in mod["latestFiles"]])
-            mod_list.append(
-                f"{mod['id']}|1|1|{fingerprints}"
+            fingerprints = "*".join(
+                [f"{f["fileFingerprint"]}" for f in mod["latestFiles"]]
             )
+
+            mod_list.append(f"{mod['id']}|1|1|{fingerprints}")
 
     with open("whitelist.txt", "w", encoding="UTF-8") as f:
         f.write(",".join(mod_list))
