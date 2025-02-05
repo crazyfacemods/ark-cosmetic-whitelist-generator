@@ -66,3 +66,4 @@ def generate():
 
     with open("whitelist.txt", "w", encoding="UTF-8") as f:
         f.write("\n".join(mod_list))
+        f.write("\n")
