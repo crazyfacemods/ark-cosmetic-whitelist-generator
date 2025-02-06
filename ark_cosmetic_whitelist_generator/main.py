@@ -61,11 +61,7 @@ def generate():
 
     for mod in all_mods:
         if str(mod["id"]) not in blacklist:
-            fingerprints = "*".join(
-                [f"{f["fileFingerprint"]}" for f in mod["latestFiles"]]
-            )
-
-            mod_list.append(f"{mod['id']}|1|1|{fingerprints}")
+            mod_list.append(f"{mod['id']}|1|1|")
 
     with open("whitelist.txt", "w", encoding="UTF-8") as f:
         f.write(",".join(mod_list))
