@@ -1,9 +1,9 @@
-name: Pylint
+name: Code Quality
 
 on: [push]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,10 +15,11 @@ jobs:
         run: pipx install poetry
       - name: Add Poetry to path
         run: echo "${HOME}/.poetry/bin" >> $GITHUB_PATH
-      - name: Install venv
-        run: |
-          poetry install
-          pip install pylint
-      - name: Analysing the code with pylint
-        run: |
-          poetry run pylint $(git ls-files '*.py')
+      - name: Install dependencies
+        run: poetry install
+      - name: Lint with ruff
+        run: poetry run ruff check .
+      - name: Check formatting with ruff
+        run: poetry run ruff format --check .
+      - name: Analyse with pylint
+        run: poetry run pylint --max-line-length=120 $(git ls-files '*.py')

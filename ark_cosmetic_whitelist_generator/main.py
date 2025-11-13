@@ -1,10 +1,9 @@
-""" This script generates a whitelist.txt file for the ARK mod "Cosmetic" by
-    querying the CurseForge API. """
+"""This script generates a whitelist.txt file for the ARK mod "Cosmetic" by
+querying the CurseForge API."""
 
 import os
-import requests
-from typing import List
 
+import requests
 
 CURSEFORGE_API_KEY = os.getenv("CURSEFORGE_API_KEY")
 CURSEFORGE_API_URL = "https://api.curseforge.com/v1"
@@ -13,9 +12,7 @@ CURSEFORGE_API_URL = "https://api.curseforge.com/v1"
 def call_curseforge_api(endpoint: str = "", params: dict = None):
     """Call the CurseForge API with the given endpoint and parameters."""
     headers = {"x-api-key": CURSEFORGE_API_KEY, "Accept": "application/json"}
-    r = requests.get(
-        CURSEFORGE_API_URL + endpoint, headers=headers, params=params, timeout=10
-    )
+    r = requests.get(CURSEFORGE_API_URL + endpoint, headers=headers, params=params, timeout=10)
     if r.status_code != 200:
         print(f"Error: {r.status_code}")
         print(r.text)
@@ -23,7 +20,7 @@ def call_curseforge_api(endpoint: str = "", params: dict = None):
     return r.json()
 
 
-def get_all_mods(game_id: int, category_id: int, index: int = 1, all_mods: List = None):
+def get_all_mods(game_id: int, category_id: int, index: int = 1, all_mods: list = None):
     """Get all mods for the given game and category."""
     if all_mods is None:
         all_mods = []
@@ -37,9 +34,7 @@ def get_all_mods(game_id: int, category_id: int, index: int = 1, all_mods: List 
         all_mods.extend(res["data"])
         # print(json.dumps(res["data"], indent=2))
         if res["pagination"]["resultCount"] > 0:
-            return get_all_mods(
-                game_id, category_id, index + res["pagination"]["resultCount"], all_mods
-            )
+            return get_all_mods(game_id, category_id, index + res["pagination"]["resultCount"], all_mods)
 
     return all_mods
 
@@ -51,7 +46,7 @@ def generate():
         print("CURSEFORGE_API_KEY not set")
 
     blacklist = []
-    with open("blacklist.txt", "r", encoding="UTF-8") as f:
+    with open("blacklist.txt", encoding="UTF-8") as f:
         for item in f.read().splitlines():
             blacklist.append(item.split("|")[0])
 
@@ -61,9 +56,7 @@ def generate():
 
     for mod in all_mods:
         if str(mod["id"]) not in blacklist:
-            fingerprints = "*".join(
-                [f"{f["fileFingerprint"]}" for f in mod["latestFiles"]]
-            )
+            fingerprints = "*".join([f"{f["fileFingerprint"]}" for f in mod["latestFiles"]])
             mod_list.append(f"{mod['id']}|1|1|{fingerprints}")
 
     with open("whitelist.txt", "w", encoding="UTF-8") as f:
