@@ -51,15 +51,9 @@ jobs:
           asset_name: whitelist.txt
           asset_content_type: plain/text
       - name: delete old releases
-        run: |
-          # Keep only the latest 5 releases
-          gh release list --limit 100 --json tagName,createdAt | \
-          jq -r 'sort_by(.createdAt) | reverse | .[5:] | .[].tagName' | \
-          xargs -I {} gh release delete {} --yes || true
-          
-          # Also clean up associated tags
-          gh release list --limit 100 --json tagName,createdAt | \
-          jq -r 'sort_by(.createdAt) | reverse | .[5:] | .[].tagName' | \
-          xargs -I {} git push --delete origin {} || true
-        env:
-          GH_TOKEN: ${{ github.token }}
+        uses: Nats-ji/delete-old-releases@v1
+        with:
+          token: ${{ github.token }}
+          keep-count: 5
+          remove-tags: true
+          keep-old-minor-releases: false
